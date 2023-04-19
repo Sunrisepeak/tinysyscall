@@ -7,7 +7,7 @@ use sal;
 /// 不用发出警告. 并且使用no_mangle属性, 让编译器保留原始函数名`_start`
 #[no_mangle]
 extern fn _start() {
-    sal::hello_sal();
-    sal::sys_sleep(3);
-    sal::sys_exit(0);
+    sal::hello();
+    sal::sleep(3);
+    sal::exit(0);
 }
