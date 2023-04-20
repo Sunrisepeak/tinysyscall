@@ -1,7 +1,7 @@
 #![no_std]
 
 use interface::ISAL;
-use os::syscall;
+use crate::os::syscall;
 
 mod lang_items;
 mod arch;
