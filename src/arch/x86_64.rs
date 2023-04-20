@@ -1,3 +1,4 @@
+#[inline]
 pub fn syscall(id: SyscallTable, args: [usize; 6]) -> isize {
     let mut ret: isize;
     unsafe {
@@ -21,7 +22,13 @@ pub fn syscall(id: SyscallTable, args: [usize; 6]) -> isize {
 /// x86_64 linux 系统调用表/号
 /// refs: https://x64.syscall.sh/
 pub enum SyscallTable {
+    // file
+    OPEN = 2,
+    READ = 0,
     WRITE = 1,
+    IOCTL = 16,
+    CLOSE = 3,
+
     EXIT = 60,
     NANOSLEEP = 35,
 }

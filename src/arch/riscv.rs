@@ -27,7 +27,13 @@ pub fn syscall(id: SyscallTable, args: [usize; 6]) -> isize {
 /// riscv linux 系统调用表/号
 /// refs: https://jborza.com/post/2021-05-11-riscv-linux-syscalls
 pub enum SyscallTable {
+    // file
+    OPEN = 56,
+    READ = 63,
     WRITE = 64,
+    IOCTL = 29,
+    CLOSE = 57,
+    
     EXIT = 93,
     NANOSLEEP = 101,
 }
