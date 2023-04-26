@@ -21,6 +21,7 @@ pub fn syscall(id: SyscallTable, args: [usize; 6]) -> isize {
 
 /// x86_64 linux 系统调用表/号
 /// refs: https://x64.syscall.sh/
+#[cfg(any(target_os = "linux", target_os = "none"))]
 pub enum SyscallTable {
     // file
     OPEN = 2,
@@ -31,4 +32,7 @@ pub enum SyscallTable {
 
     EXIT = 60,
     NANOSLEEP = 35,
+
+    STAT = 4,
+    GETDENTS = 78,
 }

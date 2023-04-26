@@ -26,6 +26,7 @@ pub fn syscall(id: SyscallTable, args: [usize; 6]) -> isize {
 
 /// riscv linux 系统调用表/号
 /// refs: https://jborza.com/post/2021-05-11-riscv-linux-syscalls
+#[cfg(any(target_os = "linux", target_os = "none"))]
 pub enum SyscallTable {
     // file
     OPEN = 56,
@@ -36,4 +37,7 @@ pub enum SyscallTable {
     
     EXIT = 93,
     NANOSLEEP = 101,
+
+    STAT = 80, // newfstat
+    GETDENTS = 61, // getdents64
 }

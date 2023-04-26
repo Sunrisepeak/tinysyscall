@@ -17,3 +17,6 @@ Cargo.lock
 # self
 /*/target/
 .vscode
+
+# other
+*.out

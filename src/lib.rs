@@ -1,26 +1,54 @@
 #![no_std]
-pub use interface::*;
-use crate::os::syscall;
+
+//use core::mem;
+use os::syscall;
 
 mod lang_items;
 mod arch;
 mod interface;
 mod os;
+mod console;
 
+// public api
+pub use interface::*;
+pub use console::print;
+
+
+// println! 和 print! 
+// 宏标准库实现: https://doc.rust-lang.org/nightly/src/std/macros.rs.html#132-139
+//#[macro_export]
+#[macro_export(local_inner_macros)]
+macro_rules! print {
+    ($($arg:tt)*) => {{
+        // 调用上面的print函数
+        $crate::print(core::format_args!($($arg)*));
+    }};
+}
+
+//#[macro_export]
+#[macro_export(local_inner_macros)]
+macro_rules! println {
+    // 分支1: 当无参数时
+    () => {
+        $crate::print!("\n")
+    };
+    // 分支2
+    ($($arg:tt)*) => {{
+        $crate::print!("{}\n", core::format_args!($($arg)*));
+    }};
+}
 
 pub fn hello() {
+    println!("hello");
     syscall::sys_write(1, "Hello, SAL!\n".as_bytes());
 }
 
 pub fn open(path: &str, mode: interface::OpenFlags) -> isize {
-    assert!(path.len() < 256);
-    let mut arr:[u8; 256] = [0; 256];
-    for (i, &byte) in path.as_bytes().iter().enumerate() {
-        arr[i] = byte;
-    }
+    let arr:[u8; 256] = path_check_and_convert(path);
     syscall::sys_open(arr.as_ptr() as usize, mode)
 }
 
+// TODO: del len
 pub fn read(fd: usize, buffer: &mut [u8], len: usize) -> isize {
     syscall::sys_read(fd, buffer, len)
 }
@@ -31,6 +59,20 @@ pub fn write(fd: usize, buffer: &[u8]) -> isize {
 
 pub fn ioctl(fd: usize, cmd: usize, arg: usize) -> isize {
     syscall::sys_ioctl(fd, cmd, arg)
+}
+
+pub fn stat(path: &str, stat: &mut Stat) -> isize {
+    // Convert path to array of bytes
+    let path_arr = path_check_and_convert(path);
+    /*
+    println!("---------> {}", mem::size_of::<Stat>());
+    let stat_bytes: &mut [u8] = unsafe {
+        // Safety: `Stat` and `[u8; size_of::<Stat>()]` have the same size and alignment
+        mem::transmute::<&mut Stat, &mut [u8; mem::size_of::<Stat>()]>(stat)
+    };
+    */
+    // Call syscall to get stat information
+    syscall::sys_stat(path_arr.as_ptr() as usize, stat)
 }
 
 pub fn close(fd: usize) -> isize {
@@ -45,6 +87,15 @@ pub fn sleep(sec: usize) -> isize {
     let ts = interface::TimeSpec { tv_sec: sec, tv_nsec: 0  };
     let tsn = interface::TimeSpec { tv_sec: 0, tv_nsec: 0 };
     syscall::sys_nanosleep(ts, tsn)
+}
+
+fn path_check_and_convert(path: &str) -> [u8; 256] {
+    assert!(path.len() < 256);
+    let mut arr:[u8; 256] = [0; 256];
+    for (i, &byte) in path.as_bytes().iter().enumerate() {
+        arr[i] = byte;
+    }
+    arr
 }
 
 

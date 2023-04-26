@@ -11,3 +11,4 @@ edition = "2021"
 
 [dependencies]
 bitflags = "2.0.0"
+libc = "0.2.80"
