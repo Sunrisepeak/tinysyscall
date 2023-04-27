@@ -66,7 +66,7 @@ impl ISAL for SAL {
 
                     name_slice = core::slice::from_raw_parts(
                         dir_name_addr as *const u8,
-                        strlen(dir_name_addr as *const u8)
+                        crate::strlen(dir_name_addr as *const u8)
                     );
 
                     offset += (*dirent_ptr).d_reclen as usize;
@@ -198,15 +198,4 @@ impl ISAL for SAL {
         ret
     }
 
-}
-
-
-unsafe fn strlen(s: *const u8) -> usize {
-    let mut len = 0;
-    unsafe {
-        while *s.offset(len as isize) != 0 {
-            len += 1;
-        }
-    }
-    len
 }
