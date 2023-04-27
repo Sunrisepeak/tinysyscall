@@ -24,16 +24,16 @@ pub struct dirent {
 }
 
 
-#[cfg(target_os = "linux")]
-pub use libc::stat;
+//#[cfg(target_os = "linux")]
+//pub use libc::stat;
 
 #[repr(C)]
-#[cfg(target_os = "none")]
+#[cfg(any(target_os = "linux", target_os = "none"))]
 pub struct stat {
     pub st_dev: u64,
     pub st_ino: u64,
-    pub st_mode: u32,
     pub st_nlink: u64,
+    pub st_mode: u32,
     pub st_uid: u32,
     pub st_gid: u32,
     pub __pad0: u32,
@@ -47,5 +47,5 @@ pub struct stat {
     pub st_mtime_nsec: i64,
     pub st_ctime: i64,
     pub st_ctime_nsec: i64,
-    pub __unused: [i64; 2],
+    pub __unused: [i64; 3],
 }

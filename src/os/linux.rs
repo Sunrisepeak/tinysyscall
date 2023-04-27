@@ -146,11 +146,11 @@ impl ISAL for SAL {
         )
     }
 
-    // TODO: libc::stat -> stat
+    // TODO: libc::stat -> stat, tmp ok adjust struct
     fn sys_stat(path_ptr: usize, stat: &mut Stat) -> isize {
 
         let mut file_stat: abi_types::stat = unsafe { core::mem::zeroed() };
-        let file_stat_ptr = (&mut file_stat as *mut abi_types::stat) as usize;
+        let file_stat_ptr = (&mut file_stat as *const abi_types::stat) as usize;
         //assert_eq!(core::mem::size_of::<abi_types::stat>(), core::mem::size_of::<libc::stat>());
 
         let ret = syscall(
@@ -161,28 +161,6 @@ impl ISAL for SAL {
                 0, 0, 0, 0
             ]
         );
-
-/*      // pointer align?
-        let file_stat2 = (file_stat_ptr - 1) as *mut abi_types::stat;
-
-        unsafe {
-            assert_eq!(file_stat.st_dev, 66308);
-            
-            assert_eq!(file_stat.st_ino, (*file_stat2).st_ino);
-            assert_eq!(file_stat.st_mode, (*file_stat2).st_mode);
-            assert_eq!(file_stat.st_nlink, (*file_stat2).st_nlink);
-            assert_eq!(file_stat.st_uid, (*file_stat2).st_uid);
-            assert_eq!(file_stat.st_gid, (*file_stat2).st_gid);
-            assert_eq!(file_stat.st_rdev, (*file_stat2).st_rdev);
-            assert_eq!(file_stat.st_size, (*file_stat2).st_size);
-            assert_eq!(file_stat.st_blksize, (*file_stat2).st_blksize);
-            assert_eq!(file_stat.st_blocks, (*file_stat2).st_blocks);
-            assert_eq!(file_stat.st_atime, (*file_stat2).st_atime);
-            assert_eq!(file_stat.st_mtime, (*file_stat2).st_mtime);
-            assert_eq!(file_stat.st_ctime, (*file_stat2).st_ctime);
-            
-        }
-*/
 
         stat.dev = file_stat.st_dev;
         stat.ino = file_stat.st_ino;

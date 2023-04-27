@@ -34,7 +34,7 @@ mod linux_abi {
     #[test]
     fn stat_abi() {
 
-        assert_eq!(mem::size_of::<libc::stat>(), mem::size_of::<abi_types::stat>());
+        assert_eq!(mem::size_of::<abi_types::stat>(), mem::size_of::<libc::stat>());
 
         let file_stat1: abi_types::stat = unsafe { sal::memset(0x81) };
         let file_stat2: libc::stat = unsafe { sal::memset(0x81) };

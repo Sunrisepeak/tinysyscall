@@ -12,5 +12,5 @@ edition = "2021"
 [dependencies]
 bitflags = "2.0.0"
 
-# for test
+# only for test
 libc = "0.2.80"
