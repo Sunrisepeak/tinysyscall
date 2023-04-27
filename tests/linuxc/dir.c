@@ -27,7 +27,7 @@ int main() {
             }
             d = (struct dirent *) (buf + bpos);
             bpos += d->d_reclen;
-            printf("%ld", bpos);
+            printf("%d", bpos);
         }
     }
 

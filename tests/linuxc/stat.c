@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
+
+
 struct stat file_info;
 
 int main() {
@@ -11,6 +13,7 @@ int main() {
         return 1;
     }
     printf("%ld\n", sizeof(file_info));
+    printf("File st_dev: %ld\n", file_info.st_dev);
     printf("File size: %ld bytes\n", file_info.st_size);
     printf("Number of links: %ld\n", file_info.st_nlink);
     printf("File inode: %ld\n", file_info.st_ino);

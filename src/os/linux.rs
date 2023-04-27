@@ -6,7 +6,7 @@ use crate::arch::x86_64::{syscall, SyscallTable};
 
 use crate::interface::{ISAL, TimeSpec, OpenFlags, Stat};
 
-use libc;
+use crate::os::abi_types;
 
 /// [type def]: https://faculty.nps.edu/cseagle/assembly/sys_call.html
 /// [error code]: https://github.com/torvalds/linux/blob/master/include/uapi/asm-generic/errno-base.h
@@ -52,34 +52,38 @@ impl ISAL for SAL {
                 return read_size;
             }
 
-            unsafe {
-                
-                let mut index: usize = 0;
-                let mut offset = 0;
+            let mut index: usize = 0;
+            let mut offset = 0;
 
-                while index < read_size as usize {
+            while index < read_size as usize {
 
-                    let dirent_ptr = (buffer[offset..]).as_ptr() as *mut libc::dirent;
+                let dirent_ptr = (buffer[offset..]).as_ptr() as *mut abi_types::dirent;
 
+                let name_slice: &[u8];
+                unsafe { // convert file name to name slice
+                    // TODO: why - 1 ?
                     let dir_name_addr = (*dirent_ptr).d_name.as_ptr() as usize - 1;
 
-                    let name_slice: &[u8] = core::slice::from_raw_parts(
+                    name_slice = core::slice::from_raw_parts(
                         dir_name_addr as *const u8,
-                        libc::strlen(dir_name_addr as *const i8) as usize
+                        strlen(dir_name_addr as *const u8)
                     );
 
-                    for y in 0..name_slice.len() {
-                        buffer[index] = name_slice[y];
-                        index += 1;
-                    }
-                    buffer[index] = '\n' as u8;
-                    index += 1;
                     offset += (*dirent_ptr).d_reclen as usize;
                 }
 
-                ret = index as isize;
+                for y in 0..name_slice.len() {
+                    buffer[index] = name_slice[y];
+                    index += 1;
+                }
 
+                buffer[index] = '\n' as u8;
+                index += 1;
+                
             }
+
+            ret = index as isize;
+
         }
 
 
@@ -142,18 +146,43 @@ impl ISAL for SAL {
         )
     }
 
+    // TODO: libc::stat -> stat
     fn sys_stat(path_ptr: usize, stat: &mut Stat) -> isize {
 
-        let mut file_stat: libc::stat = unsafe { core::mem::zeroed() };
-        
+        let mut file_stat: abi_types::stat = unsafe { core::mem::zeroed() };
+        let file_stat_ptr = (&mut file_stat as *mut abi_types::stat) as usize;
+        //assert_eq!(core::mem::size_of::<abi_types::stat>(), core::mem::size_of::<libc::stat>());
+
         let ret = syscall(
             SyscallTable::STAT,
             [
                 path_ptr,
-                (&mut file_stat as *mut libc::stat) as usize,
+                file_stat_ptr,
                 0, 0, 0, 0
             ]
         );
+
+/*      // pointer align?
+        let file_stat2 = (file_stat_ptr - 1) as *mut abi_types::stat;
+
+        unsafe {
+            assert_eq!(file_stat.st_dev, 66308);
+            
+            assert_eq!(file_stat.st_ino, (*file_stat2).st_ino);
+            assert_eq!(file_stat.st_mode, (*file_stat2).st_mode);
+            assert_eq!(file_stat.st_nlink, (*file_stat2).st_nlink);
+            assert_eq!(file_stat.st_uid, (*file_stat2).st_uid);
+            assert_eq!(file_stat.st_gid, (*file_stat2).st_gid);
+            assert_eq!(file_stat.st_rdev, (*file_stat2).st_rdev);
+            assert_eq!(file_stat.st_size, (*file_stat2).st_size);
+            assert_eq!(file_stat.st_blksize, (*file_stat2).st_blksize);
+            assert_eq!(file_stat.st_blocks, (*file_stat2).st_blocks);
+            assert_eq!(file_stat.st_atime, (*file_stat2).st_atime);
+            assert_eq!(file_stat.st_mtime, (*file_stat2).st_mtime);
+            assert_eq!(file_stat.st_ctime, (*file_stat2).st_ctime);
+            
+        }
+*/
 
         stat.dev = file_stat.st_dev;
         stat.ino = file_stat.st_ino;
@@ -169,4 +198,15 @@ impl ISAL for SAL {
         ret
     }
 
+}
+
+
+unsafe fn strlen(s: *const u8) -> usize {
+    let mut len = 0;
+    unsafe {
+        while *s.offset(len as isize) != 0 {
+            len += 1;
+        }
+    }
+    len
 }

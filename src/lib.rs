@@ -8,10 +8,13 @@ mod arch;
 mod interface;
 mod os;
 mod console;
+mod utils;
 
 // public api
+pub use utils::*;
 pub use interface::*;
 pub use console::print;
+pub use os::abi_types;
 
 
 // println! 和 print! 
