@@ -20,6 +20,18 @@ pub enum SyscallTable {
 pub mod isal {
     use super::*;
 
+    pub trait Task {
+
+    }
+
+    pub Memory {
+
+    }
+
+    pub trait Time {
+        fn sys_nanosleep(req: TimeSpec, rem: TimeSpec) -> isize;
+    }
+
     pub trait File {
         fn sys_open(path_ptr: usize, flags: OpenFlags) -> isize;
         fn sys_read(fd: usize, buffer: &mut [u8], len: usize) -> isize;
@@ -31,14 +43,6 @@ pub mod isal {
 
     pub trait Process {
         fn sys_exit(xstate: i32) -> isize;
-    }
-
-    pub trait Task {
-
-    }
-
-    pub trait Time {
-        fn sys_nanosleep(req: TimeSpec, rem: TimeSpec) -> isize;
     }
 }
 
