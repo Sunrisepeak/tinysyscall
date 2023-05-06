@@ -4,7 +4,8 @@ use crate::arch::riscv::{syscall, SyscallTable};
 #[cfg(target_arch = "x86_64")]
 use crate::arch::x86_64::{syscall, SyscallTable};
 
-use crate::interface::{ISAL, TimeSpec, OpenFlags, Stat};
+use crate::interface::{isal, TimeSpec, OpenFlags, Stat};
+
 
 use crate::os::abi_types;
 
@@ -13,7 +14,7 @@ use crate::os::abi_types;
 
 pub struct SAL;
 
-impl ISAL for SAL {
+impl isal::File for SAL {
 
     fn sys_open(path_ptr: usize, flags: OpenFlags) -> isize {
         syscall(
@@ -125,27 +126,6 @@ impl ISAL for SAL {
         )
     }
 
-    fn sys_exit(xstate: i32) -> isize {
-        syscall(
-            SyscallTable::EXIT,
-            [
-                xstate as usize,
-                0, 0, 0, 0, 0
-            ]
-        )
-    }
-
-    fn sys_nanosleep(req: TimeSpec, _rem: TimeSpec) -> isize {
-        let req_ptr = &req as *const TimeSpec;
-        syscall(
-            SyscallTable::NANOSLEEP,
-            [
-                req_ptr as usize,
-                0, 0, 0, 0, 0
-            ]
-        )
-    }
-
     // TODO: libc::stat -> stat, tmp ok adjust struct
     fn sys_stat(path_ptr: usize, stat: &mut Stat) -> isize {
 
@@ -175,5 +155,29 @@ impl ISAL for SAL {
 
         ret
     }
+}
 
+impl isal::Process for SAL {
+    fn sys_exit(xstate: i32) -> isize {
+        syscall(
+            SyscallTable::EXIT,
+            [
+                xstate as usize,
+                0, 0, 0, 0, 0
+            ]
+        )
+    }
+}
+
+impl isal::Time for SAL {
+    fn sys_nanosleep(req: TimeSpec, _rem: TimeSpec) -> isize {
+        let req_ptr = &req as *const TimeSpec;
+        syscall(
+            SyscallTable::NANOSLEEP,
+            [
+                req_ptr as usize,
+                0, 0, 0, 0, 0
+            ]
+        )
+    }
 }

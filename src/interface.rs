@@ -17,6 +17,32 @@ pub enum SyscallTable {
     EXIT = 7,
 }
 
+pub mod isal {
+    use super::*;
+
+    pub trait File {
+        fn sys_open(path_ptr: usize, flags: OpenFlags) -> isize;
+        fn sys_read(fd: usize, buffer: &mut [u8], len: usize) -> isize;
+        fn sys_write(fd: usize, buffer: &[u8]) -> isize;
+        fn sys_ioctl(fd: usize, cmd: usize, arg: usize) -> isize;
+        fn sys_stat(path_ptr: usize, stat: &mut Stat) -> isize;
+        fn sys_close(fd: usize) -> isize;
+    }
+
+    pub trait Process {
+        fn sys_exit(xstate: i32) -> isize;
+    }
+
+    pub trait Task {
+
+    }
+
+    pub trait Time {
+        fn sys_nanosleep(req: TimeSpec, rem: TimeSpec) -> isize;
+    }
+}
+
+/*
 // syscall abstract layer interface
 pub trait ISAL {
     // file
@@ -31,3 +57,4 @@ pub trait ISAL {
     fn sys_exit(xstate: i32) -> isize;
     fn sys_nanosleep(req: TimeSpec, rem: TimeSpec) -> isize;
 }
+*/

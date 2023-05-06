@@ -7,7 +7,7 @@ struct Stdout;
 impl fmt::Write for Stdout {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         // 使用系统调用, fd 1 为标准输出
-        use crate::interface::ISAL;
+        use crate::interface::isal::File;
         syscall::sys_write(1, s.as_bytes());
         Ok(())
     }

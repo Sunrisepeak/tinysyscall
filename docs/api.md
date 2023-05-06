@@ -1,4 +1,4 @@
-### Process / Threads / Task control
+### Process control
 - fork()
 - exec()
 - wait()
@@ -8,11 +8,21 @@
 - setpriority()
 - kill()
 
-### Shared memory / Interprocess communication
+### Task/Thread control
+- task_create
+- task_join
+- task_detach
+- task_destory
+- task_mutex_lock
+- task_mutex_unlock
+
+### Memory Control
+- malloc
+- free
 - mmap()
 - munmap()
 
-### File management
+### File/Device Control
 - create()
 - open()
 - read()
@@ -26,6 +36,6 @@
 - chmod()
 - chown()
 
-### Time
+### Time Control
 - usleep()
 - time()
