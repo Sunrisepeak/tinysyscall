@@ -14,6 +14,71 @@ use crate::os::abi_types;
 
 pub struct SAL;
 
+impl isal::Memory for SAL {
+    fn mmap(
+        addr: usize,
+        size: usize,
+        prot: isize,
+        flags: isize,
+        fd: usize,
+        offset: usize
+    ) -> usize {
+        let ret;
+
+        #[cfg(target_arch = "riscv64")]
+        {
+            let mut args = abi_types::mmap_arg_struct {
+                addr: addr,
+                size: size,
+                prot: prot,
+                flags: flags,
+                fd: fd,
+                offset: offset
+            };
+
+            let args_ptr = args as *mut abi_types::mmap_arg_struct;
+
+            ret = syscall(
+                SyscallTable::MMAP,
+                [
+                    args_ptr as usize,
+                    0, 0, 0, 0, 0
+                ]
+            );
+
+        }
+
+        #[cfg(target_arch = "x86_64")]
+        {
+            ret = syscall(
+                SyscallTable::MMAP,
+                [
+                    addr,
+                    size,
+                    prot as usize,
+                    flags as usize,
+                    fd,
+                    offset
+                ]
+            );
+        }
+        
+        ret as usize
+    }
+    
+    fn munmap(addr: usize, len: usize) -> isize {
+        let ret = syscall(
+            SyscallTable::MUNMAP,
+            [
+                addr,
+                len,
+                0, 0, 0, 0
+            ]
+        );
+        ret
+    }
+}
+
 impl isal::File for SAL {
 
     fn sys_open(path_ptr: usize, flags: OpenFlags) -> isize {

@@ -40,4 +40,7 @@ pub enum SyscallTable {
 
     STAT = 80, // newfstat
     GETDENTS = 61, // getdents64
+
+    MMAP = 222,
+    MUNMAP = 215,
 }

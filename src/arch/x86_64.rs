@@ -35,4 +35,7 @@ pub enum SyscallTable {
 
     STAT = 4,
     GETDENTS = 78,
+
+    MMAP = 9,
+    MUNMAP = 11,
 }

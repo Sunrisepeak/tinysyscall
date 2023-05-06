@@ -49,3 +49,15 @@ pub struct stat {
     pub st_ctime_nsec: i64,
     pub __unused: [i64; 3],
 }
+
+#[repr(C)]
+#[cfg(target_arch = "riscv64")]
+#[cfg(any(target_os = "linux", target_os = "none"))]
+struct mmap_arg_struct {
+    pub addr: usize,
+    pub len: usize,
+    pub prot: usize,
+    pub flags: usize,
+    pub fd: usize,
+    pub offset: usize,
+}
