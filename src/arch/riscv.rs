@@ -45,5 +45,4 @@ pub enum SyscallTable {
     MMAP = 222,
     MUNMAP = 215,
 
-    CLONE = 220,
 }

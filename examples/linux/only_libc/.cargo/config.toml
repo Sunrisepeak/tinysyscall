@@ -1,0 +1,8 @@
+# undefined _Unwind_Resume: https://github.com/rust-lang/rust/issues/47493
+# use --release to build, need manual for each build. why? now, I don't know.
+
+#[build]
+#default-run = "build --release"
+
+[target.'cfg(target_os = "linux")']
+rustflags = ["-C", "link-args=-lc"]

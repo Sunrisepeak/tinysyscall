@@ -40,5 +40,4 @@ pub enum SyscallTable {
     MMAP = 9,
     MUNMAP = 11,
 
-    CLONE = 56, // thread / task
 }

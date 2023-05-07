@@ -1,10 +1,10 @@
+use std;
 use core::ffi::CStr;
 use libc::c_char;
 use sal;
 
 #[test]
 fn hello_sal() {
-    println!();
     assert_eq!((), sal::hello());
 }
 
@@ -38,16 +38,11 @@ fn file_info() {
 
     assert_eq!(sal::stat("tests/sal-test.data", &mut stat), 0);
 
-    sal::println!("\nfile_info: {:?}", stat);
-    sal::println!("File size: {} bytes", stat.size as isize);
-    sal::println!("Number of links: {}", stat.nlink);
-    sal::println!("File inode: {}", stat.ino);
-    sal::println!("File permissions: {:o}", stat.mode);
-    sal::println!("File owner: {}", stat.uid);
-    sal::println!("File group: {}", stat.gid);
-    sal::println!("Last access time: {}", stat.atime);
-    sal::println!("Last modification time: {}", stat.mtime);
-    sal::println!("Last status change time: {}", stat.ctime);
+    let metadata = std::fs::metadata("tests/sal-test.data").expect("Failed to open file");
+
+    let file_size = metadata.len();
+
+    assert_eq!(stat.size, file_size as i64);
 
     assert_eq!(sal::close(fd as usize), 0);
 
@@ -55,7 +50,6 @@ fn file_info() {
 
 #[test]
 fn current_dir_list() {
-    println!("");
 
     let fd = sal::open(
         ".",
@@ -70,7 +64,6 @@ fn current_dir_list() {
     let mut offset = 0;
     loop {
         let read_len = sal::read(fd as usize, &mut buffer[offset..], READ_LEN - offset);
-        println!("current_dir_list: read size, {}", read_len);
         if read_len <= 0 {
             break;
         }
@@ -84,10 +77,10 @@ fn current_dir_list() {
     // overwrite
     let files = files.split('\n');
     let mut file_nums = 0;
-    sal::println!();
+    std::println!();
     for file in files {
         if !file.is_empty() {
-            sal::println!("current_dir_list: {}", file);
+            //std::println!("current_dir_list: {}", file);
         }
         file_nums += 1;
     }

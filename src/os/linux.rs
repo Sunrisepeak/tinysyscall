@@ -16,7 +16,7 @@ pub struct SAL;
 
 extern "C" fn thread_func_wrapper(_arg: *mut libc::c_void) -> i32 {
     //let arg = arg as usize;
-    crate::println!("TODO: thread_func_wrapper no impl");
+    crate::file::write(1, "TODO: thread_func_wrapper no impl".as_bytes());
     //panic!("test");
     0
 }

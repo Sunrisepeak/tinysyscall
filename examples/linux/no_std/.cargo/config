@@ -1,0 +1,5 @@
+#[target.'cfg(target_os = "linux")']
+#rustflags = ["-C", "link-args=-lc"]
+
+#[target.'cfg(target_os = "none")']
+#rustflags = ["-C", "link-arg=-nostartfiles"]

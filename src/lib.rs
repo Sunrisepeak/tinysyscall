@@ -8,47 +8,19 @@ mod lang_items;
 mod arch;
 mod interface;
 mod os;
-mod console;
 mod utils;
 
 // public api
 pub use utils::*;
 pub use crate::interface::*;
-pub use console::print;
 pub use os::abi_types;
 
 pub use self::file::*;
 pub use self::process::*;
 pub use self::time::*;
 
-
-// println! 和 print! 
-// 宏标准库实现: https://doc.rust-lang.org/nightly/src/std/macros.rs.html#132-139
-//#[macro_export]
-#[macro_export(local_inner_macros)]
-macro_rules! print {
-    ($($arg:tt)*) => {{
-        // 调用上面的print函数
-        $crate::print(core::format_args!($($arg)*));
-    }};
-}
-
-//#[macro_export]
-#[macro_export(local_inner_macros)]
-macro_rules! println {
-    // 分支1: 当无参数时
-    () => {
-        $crate::print!("\n")
-    };
-    // 分支2
-    ($($arg:tt)*) => {{
-        $crate::print!("{}\n", core::format_args!($($arg)*));
-    }};
-}
-
 pub fn hello() {
     use interface::isal::File;
-    println!("hello");
     syscall::sys_write(1, "Hello, SAL!\n".as_bytes());
 }
 
@@ -131,44 +103,4 @@ fn path_check_and_convert(path: &str) -> [u8; 256] {
         arr[i] = byte;
     }
     arr
-}
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    const TEST_FILE: &str = "tests/sal-test.data";
-
-    #[test]
-    fn hello_sal() {
-        assert_eq!((), hello());
-    }
-
-    #[test]
-    fn sal_exit() {
-        //assert_eq!(3, exit(3));
-    }
-
-    #[test]
-    fn sal_write() {
-        let hw = "Hello, World!\n";
-        assert_eq!(hw.len(), write(1, hw.as_bytes()) as usize);
-    }
-
-    #[test]
-    fn sal_sleep() {
-        assert_eq!(0, sleep(1) as usize);
-    }
-
-    #[test]
-    fn sal_open_read_close() {
-        const READ_LEN: usize = 2;
-        let fd = open(TEST_FILE, OpenFlags::Create | OpenFlags::RW);
-        debug_assert!(fd > 0);
-        let buffer: &mut [u8; READ_LEN] = &mut [0; READ_LEN];
-        assert_eq!(read(fd as usize, buffer, READ_LEN), READ_LEN as isize);
-        assert_eq!(close(fd as usize), 0);
-    }
 }
