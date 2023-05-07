@@ -52,6 +52,18 @@ pub fn hello() {
     syscall::sys_write(1, "Hello, SAL!\n".as_bytes());
 }
 
+pub mod task {
+    use super::*;
+    use isal::Task;
+
+    pub fn create<Func>(func: Func, stack_ptr: & mut [u8]) -> usize
+    where Func: Fn() + 'static {
+        unsafe {
+            syscall::create(func, stack_ptr.as_mut_ptr().add(stack_ptr.len() - 1) as usize)
+        }
+    }
+}
+
 pub mod file {
     use super::*;
     use isal::File;

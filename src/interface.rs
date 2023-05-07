@@ -17,20 +17,23 @@ pub enum SyscallTable {
     EXIT = 7,
 }
 
+/*
 pub struct TCB {
     pub pid: usize,
     pub stack_size: usize,
     pub status: isize
 }
+*/
 
 pub mod isal {
     use super::*;
 
     // subsets for process
     pub trait Task {
-        fn create<Func, Args, RVal>(func: Func, stack_size: usize, args: &Args) -> TCB
-        where Func: Fn(&Args) -> RVal;
-        fn destory(tcb: &TCB);
+        fn create<Func>(func: Func, stack_top_ptr: usize) -> usize
+        where Func: Fn() + 'static;
+
+        fn destory(tid: usize);
     }
 
     pub trait Memory {

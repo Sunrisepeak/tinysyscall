@@ -36,6 +36,9 @@ pub enum SyscallTable {
     STAT = 4,
     GETDENTS = 78,
 
+    // memory
     MMAP = 9,
     MUNMAP = 11,
+
+    CLONE = 56, // thread / task
 }

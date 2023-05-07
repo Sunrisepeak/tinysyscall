@@ -14,6 +14,65 @@ use crate::os::abi_types;
 
 pub struct SAL;
 
+extern "C" fn thread_func_wrapper(_arg: *mut libc::c_void) -> i32 {
+    //let arg = arg as usize;
+    crate::println!("TODO: thread_func_wrapper no impl");
+    //panic!("test");
+    0
+}
+
+impl isal::Task for SAL {
+    fn create<Func>(func: Func, stack_top_ptr: usize) -> usize
+    where Func: Fn() + 'static {
+
+        // let flags = libc::CLONE_VM | libc::CLONE_FS | libc::CLONE_FILES | libc::CLONE_SIGHAND | libc::CLONE_THREAD;
+        let flags = 0x0000_0100 | 0x0000_0200 | 0x0000_0400 | 0x0000_0800 | 0x0001_0000;
+
+        let func_ptr = &func as *const _ as *const dyn Fn();
+        
+        let mut tid = unsafe {
+            libc::clone(
+                thread_func_wrapper, // entry point for new thread
+                stack_top_ptr as *mut libc::c_void, // top of child stack
+                flags as libc::c_int, // thread creation flags
+                func_ptr as *mut libc::c_void, // argument to pass to thread function
+            )
+        };
+
+        //let task_ptr = thread_func_wrapper as *const ();
+
+/*      TODO: use syscall clone directly
+        let mut tid = syscall(
+            SyscallTable::CLONE,
+            [
+                (func_ptr as *mut libc::c_void) as usize, // entry point for new thread
+                stack_top_ptr, // top of child stack
+                flags, // thread creation flags
+                (func_ptr as *mut libc::c_void) as usize, // argument to pass to thread function
+                0, 0
+            ]
+        );
+        assert_eq!(tid, 0);
+
+*/
+        
+
+
+        if tid < 0 {
+            tid = 0;
+        }
+
+        tid as usize
+
+    }
+
+
+
+    fn destory(_tid: usize) {
+
+    }
+}
+
 impl isal::Memory for SAL {
     fn mmap(
         addr: usize,
