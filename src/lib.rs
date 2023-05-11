@@ -36,6 +36,26 @@ pub mod task {
     }
 }
 
+pub mod mem {
+    use super::*;
+    use isal::Memory;
+
+    pub fn mmap(
+        addr: usize,
+        size: usize,
+        prot: MemProt,
+        flags: MemFlags,
+        fd: isize,
+        offset: usize
+    ) -> usize {
+        syscall::mmap(addr, size, prot, flags, fd as usize, offset)
+    }
+
+    pub fn unmmap(addr: usize, len: usize) -> isize {
+        syscall::unmmap(addr, len)
+    }
+}
+
 pub mod file {
     use super::*;
     use isal::File;

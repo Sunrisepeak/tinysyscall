@@ -40,12 +40,12 @@ pub mod isal {
         fn mmap(
             addr: usize,
             size: usize,
-            prot: isize,
-            flags: isize,
+            prot: MemProt,
+            flags: MemFlags,
             fd: usize,
             offset: usize
         ) -> usize;
-        fn munmap(addr: usize, len: usize) -> isize;
+        fn unmmap(addr: usize, len: usize) -> isize;
     }
 
     pub trait Time {

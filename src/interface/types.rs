@@ -10,6 +10,27 @@ bitflags! {
     }
 }
 
+// Memory protection flags
+bitflags! {
+    pub struct MemProt: i32 {
+        const NONE = 0;
+        const READ = 1;
+        const WRITE = 2;
+        const EXEC = 4;
+    }
+}
+
+// Mapping flags
+bitflags! {
+    pub struct MemFlags: u32 {
+        const SHARED = 1;
+        const SHARED_VALIDATE = 3;
+        const PRIVATE = 2;
+        const ANONYMOUS = 0x20;
+        const PRIVATE_EXCEPT_UFFD = 0x8000_0000;
+    }
+}
+
 pub struct TimeSpec {
     pub tv_sec: usize,
     pub tv_nsec: isize,

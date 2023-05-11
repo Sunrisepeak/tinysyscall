@@ -4,7 +4,9 @@ use crate::arch::riscv::{syscall, SyscallTable};
 #[cfg(target_arch = "x86_64")]
 use crate::arch::x86_64::{syscall, SyscallTable};
 
-use crate::interface::{isal, TimeSpec, OpenFlags, Stat};
+use crate::interface::{isal, TimeSpec, Stat};
+use crate::interface::{MemProt, MemFlags, OpenFlags};
+
 
 
 use crate::os::abi_types;
@@ -77,8 +79,8 @@ impl isal::Memory for SAL {
     fn mmap(
         addr: usize,
         size: usize,
-        prot: isize,
-        flags: isize,
+        prot: MemProt,
+        flags: MemFlags,
         fd: usize,
         offset: usize
     ) -> usize {
@@ -89,8 +91,8 @@ impl isal::Memory for SAL {
             let mut args = abi_types::mmap_arg_struct {
                 addr: addr,
                 size: size,
-                prot: prot,
-                flags: flags,
+                prot: prot.bits(),
+                flags: flags.bits(),
                 fd: fd,
                 offset: offset
             };
@@ -114,8 +116,8 @@ impl isal::Memory for SAL {
                 [
                     addr,
                     size,
-                    prot as usize,
-                    flags as usize,
+                    prot.bits() as usize,
+                    flags.bits() as usize,
                     fd,
                     offset
                 ]
@@ -125,7 +127,7 @@ impl isal::Memory for SAL {
         ret as usize
     }
     
-    fn munmap(addr: usize, len: usize) -> isize {
+    fn unmmap(addr: usize, len: usize) -> isize {
         let ret = syscall(
             SyscallTable::MUNMAP,
             [
