@@ -16,17 +16,17 @@ use crate::os::abi_types;
 
 pub struct SAL;
 
-extern "C" fn thread_func_wrapper(_arg: *mut libc::c_void) -> i32 {
+extern "C" fn _thread_func_wrapper(_arg: *mut libc::c_void) -> i32 {
     //let arg = arg as usize;
-    crate::file::write(1, "TODO: thread_func_wrapper no impl".as_bytes());
+    crate::file::write(crate::file::STDOUT, "TODO: thread_func_wrapper no impl".as_bytes());
     //panic!("test");
     0
 }
 
 impl isal::Task for SAL {
-    fn create<Func>(func: Func, stack_top_ptr: usize) -> usize
+    fn create<Func>(_func: Func, _stack_top_ptr: usize) -> usize
     where Func: Fn() + 'static {
-
+/*
         // let flags = libc::CLONE_VM | libc::CLONE_FS | libc::CLONE_FILES | libc::CLONE_SIGHAND | libc::CLONE_THREAD;
         let flags = 0x0000_0100 | 0x0000_0200 | 0x0000_0400 | 0x0000_0800 | 0x0001_0000;
 
@@ -57,7 +57,7 @@ impl isal::Task for SAL {
         assert_eq!(tid, 0);
 
 */
-        
+
 
 
         if tid < 0 {
@@ -65,7 +65,8 @@ impl isal::Task for SAL {
         }
 
         tid as usize
-
+ */
+        1
     }
 
 
@@ -88,7 +89,7 @@ impl isal::Memory for SAL {
 
         #[cfg(target_arch = "riscv64")]
         {
-            let mut args = abi_types::mmap_arg_struct {
+            let mut args = abi_types::mmap_args_struct {
                 addr: addr,
                 size: size,
                 prot: prot.bits(),
@@ -97,7 +98,7 @@ impl isal::Memory for SAL {
                 offset: offset
             };
 
-            let args_ptr = args as *mut abi_types::mmap_arg_struct;
+            let args_ptr = args as *mut abi_types::mmap_args_struct;
 
             ret = syscall(
                 SyscallTable::MMAP,
@@ -123,7 +124,7 @@ impl isal::Memory for SAL {
                 ]
             );
         }
-        
+
         ret as usize
     }
     

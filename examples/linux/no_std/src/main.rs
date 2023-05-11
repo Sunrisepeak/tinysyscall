@@ -14,7 +14,7 @@ fn _start() { // entry point
 
 fn main() {
     let hw = "Hello No Std, Support by SAL\n";
-    sal::file::write(1, hw.as_bytes());
+    sal::file::write(sal::file::STDOUT, hw.as_bytes());
     sal::sleep(2);
     sal::exit(0);
 }

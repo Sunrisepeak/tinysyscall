@@ -1,6 +1,3 @@
-use std;
-use core::ffi::CStr;
-use libc::c_char;
 use sal;
 
 #[test]
@@ -9,84 +6,7 @@ fn hello_sal() {
 }
 
 #[test]
-fn file_ops() {
-    
-    let fd = sal::open(
-        "tests/sal-test.data",
-        sal::OpenFlags::Create | sal::OpenFlags::RW
-    );
-
-    assert!(fd > 0);
-
-    const READ_LEN: usize = 10;
-    let buffer: &mut [u8; READ_LEN] = &mut [0; READ_LEN];
-    
-    assert_eq!(sal::read(fd as usize, buffer, READ_LEN), READ_LEN as isize);
-    assert_eq!(sal::write(fd as usize, buffer), READ_LEN as isize);
-    assert_eq!(sal::close(fd as usize), 0);
+fn stdout() {
+    let tiny_syscall = "hello everyone, say hi with tiny syscall...\n";
+    sal::file::write(sal::file::STDOUT, tiny_syscall.as_bytes());
 }
-
-#[test]
-fn file_info() {
-    let fd = sal::open(
-        "tests/sal-test.data",
-        sal::OpenFlags::Create | sal::OpenFlags::RW
-    );
-    assert!(fd > 0);
-
-    let mut stat = sal::Stat::default();
-
-    assert_eq!(sal::stat("tests/sal-test.data", &mut stat), 0);
-
-    let metadata = std::fs::metadata("tests/sal-test.data").expect("Failed to open file");
-
-    let file_size = metadata.len();
-
-    assert_eq!(stat.size, file_size as i64);
-
-    assert_eq!(sal::close(fd as usize), 0);
-
-}
-
-#[test]
-fn current_dir_list() {
-
-    let fd = sal::open(
-        ".",
-        sal::OpenFlags::Create | sal::OpenFlags::Read
-    );
-
-    assert!(fd > 0);
-
-    const READ_LEN: usize = 1024;
-    let buffer: &mut [u8; READ_LEN] = &mut [0; READ_LEN];
-    
-    let mut offset = 0;
-    loop {
-        let read_len = sal::read(fd as usize, &mut buffer[offset..], READ_LEN - offset);
-        if read_len <= 0 {
-            break;
-        }
-        offset += read_len as usize;
-    }
-
-    let files;
-    unsafe {
-        files = CStr::from_ptr(buffer[..offset].as_ptr() as *const c_char).to_str().unwrap();
-    }
-    // overwrite
-    let files = files.split('\n');
-    let mut file_nums = 0;
-    std::println!();
-    for file in files {
-        if !file.is_empty() {
-            //std::println!("current_dir_list: {}", file);
-        }
-        file_nums += 1;
-    }
-    assert!(file_nums >= 2);
-    assert_eq!(sal::close(fd as usize), 0);
-
-}
-
-

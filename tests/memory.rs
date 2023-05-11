@@ -1,4 +1,4 @@
-use sal::{self, MemProt, MemFlags};
+use sal::{self, mem::MemProt, mem::MemFlags};
 
 #[test]
 fn mem_alloc_and_free() {
@@ -19,8 +19,8 @@ fn mem_alloc_and_free() {
     unsafe {
         let tmp_str: &str = "\nsal: memory test\n";
         sal::memcpy(ptr, tmp_str.as_bytes().as_ptr(), tmp_str.len());
-        sal::write(
-            1, 
+        sal::file::write(
+            1,
             core::mem::transmute(core::slice::from_raw_parts(ptr, tmp_str.len()))
         );
     }

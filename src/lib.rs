@@ -12,16 +12,9 @@ mod utils;
 
 // public api
 pub use utils::*;
-pub use crate::interface::*;
-pub use os::abi_types;
-
-pub use self::file::*;
-pub use self::process::*;
-pub use self::time::*;
 
 pub fn hello() {
-    use interface::isal::File;
-    syscall::sys_write(1, "Hello, SAL!\n".as_bytes());
+    file::write(file::STDOUT, "Hello, SAL!\n".as_bytes());
 }
 
 pub mod task {
@@ -39,13 +32,15 @@ pub mod task {
 pub mod mem {
     use super::*;
     use isal::Memory;
+    
+    pub use interface::types::{MemFlags, MemProt};
 
     pub fn mmap(
         addr: usize,
         size: usize,
         prot: MemProt,
         flags: MemFlags,
-        fd: isize,
+        fd: i32,
         offset: usize
     ) -> usize {
         syscall::mmap(addr, size, prot, flags, fd as usize, offset)
@@ -60,22 +55,26 @@ pub mod file {
     use super::*;
     use isal::File;
 
-    pub fn open(path: &str, mode: interface::OpenFlags) -> isize {
+    pub use interface::types::{OpenFlags, Stat};
+
+    pub const STDOUT: i32 = 1;
+
+    pub fn open(path: &str, mode: interface::OpenFlags) -> i32 {
         let arr:[u8; 256] = path_check_and_convert(path);
-        syscall::sys_open(arr.as_ptr() as usize, mode)
+        syscall::sys_open(arr.as_ptr() as usize, mode) as i32
     }
     
     // TODO: del len
-    pub fn read(fd: usize, buffer: &mut [u8], len: usize) -> isize {
-        syscall::sys_read(fd, buffer, len)
+    pub fn read(fd: i32, buffer: &mut [u8], len: usize) -> isize {
+        syscall::sys_read(fd as usize, buffer, len)
     }
     
-    pub fn write(fd: usize, buffer: &[u8]) -> isize {
-        syscall::sys_write(fd, buffer)
+    pub fn write(fd: i32, buffer: &[u8]) -> isize {
+        syscall::sys_write(fd as usize, buffer)
     }
     
-    pub fn ioctl(fd: usize, cmd: usize, arg: usize) -> isize {
-        syscall::sys_ioctl(fd, cmd, arg)
+    pub fn ioctl(fd: i32, cmd: usize, arg: usize) -> isize {
+        syscall::sys_ioctl(fd as usize, cmd, arg)
     }
     
     pub fn stat(path: &str, stat: &mut Stat) -> isize {
@@ -92,8 +91,8 @@ pub mod file {
         syscall::sys_stat(path_arr.as_ptr() as usize, stat)
     }
     
-    pub fn close(fd: usize) -> isize {
-        syscall::sys_close(fd)
+    pub fn close(fd: i32) -> isize {
+        syscall::sys_close(fd as usize)
     }
 }
 
