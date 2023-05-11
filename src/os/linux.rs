@@ -16,12 +16,14 @@ use crate::os::abi_types;
 
 pub struct SAL;
 
+/*
 extern "C" fn _thread_func_wrapper(_arg: *mut libc::c_void) -> i32 {
     //let arg = arg as usize;
     crate::file::write(crate::file::STDOUT, "TODO: thread_func_wrapper no impl".as_bytes());
     //panic!("test");
     0
 }
+*/
 
 impl isal::Task for SAL {
     fn create<Func>(_func: Func, _stack_top_ptr: usize) -> usize
@@ -91,14 +93,14 @@ impl isal::Memory for SAL {
         {
             let mut args = abi_types::mmap_args_struct {
                 addr: addr,
-                size: size,
-                prot: prot.bits(),
-                flags: flags.bits(),
+                len: size,
+                prot: prot.bits() as usize,
+                flags: flags.bits() as usize,
                 fd: fd,
                 offset: offset
             };
 
-            let args_ptr = args as *mut abi_types::mmap_args_struct;
+            let args_ptr = &mut args as *mut abi_types::mmap_args_struct;
 
             ret = syscall(
                 SyscallTable::MMAP,

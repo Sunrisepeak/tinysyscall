@@ -53,7 +53,7 @@ pub struct stat {
 #[repr(C)]
 #[cfg(target_arch = "riscv64")]
 #[cfg(any(target_os = "linux", target_os = "none"))]
-struct mmap_args_struct {
+pub struct mmap_args_struct {
     pub addr: usize,
     pub len: usize,
     pub prot: usize,
@@ -68,6 +68,7 @@ struct mmap_args_struct {
 mod linux_abi {
     use crate::os::abi_types;
     use core::mem;
+    extern crate libc;
 
     #[test]
     fn dirent_abi() {

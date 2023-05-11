@@ -15,8 +15,8 @@ fn _start() { // entry point
 fn main() {
     let hw = "Hello No Std, Support by SAL\n";
     sal::file::write(sal::file::STDOUT, hw.as_bytes());
-    sal::sleep(2);
-    sal::exit(0);
+    sal::time::sleep(2);
+    sal::process::exit(0);
 }
 
 // rust lang items

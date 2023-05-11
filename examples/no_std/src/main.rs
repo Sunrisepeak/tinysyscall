@@ -8,6 +8,6 @@ use sal;
 #[no_mangle]
 extern fn _start() {
     sal::hello();
-    sal::sleep(3);
-    sal::exit(0);
+    sal::time::sleep(3);
+    sal::process::exit(0);
 }

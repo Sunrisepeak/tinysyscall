@@ -18,7 +18,6 @@ pub fn syscall(id: SyscallTable, args: [usize; 6]) -> isize {
             inlateout("x10") args[0] => ret, // a0/x10 先作为输入参数0 再作为返回值 -> ret
             in("x11") args[1], // a1 寄存器 输入参数1
             in("x12") args[2], // a2/x11 寄存器 输入参数2
-            in("x12") args[3], // a3/x12 寄存器 输入参数3
             in("x17") id as isize,      // a7/x17 寄存器 输入 系统调用号
         );
     }
