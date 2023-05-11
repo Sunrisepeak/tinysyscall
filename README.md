@@ -74,6 +74,8 @@ fn main() {
 
 ## Other
 
+- [Crate Status](https://crates.io/crates/tinysyscall)
+
 - [Linux](https://github.com/torvalds/linux)
   - [x86_64](https://x64.syscall.sh/)
   - [riscv64](https://jborza.com/post/2021-05-11-riscv-linux-syscalls)
