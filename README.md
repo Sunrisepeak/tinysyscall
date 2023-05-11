@@ -3,6 +3,34 @@ a (no depend std) tiny syscall abstract layer...
 
 
 
+## Usage
+
+Add the following to your `Cargo.toml`:
+
+```rust
+[dependencies]
+tinysyscall = "0.1.0"
+```
+
+
+
+## Examples
+
+```rust
+use tinysyscall;
+
+fn main() {
+    let hw = "Hello, World!\n";
+    tinysyscall::file::write(tinysyscall::file::STDOUT, hw.as_bytes());
+}
+```
+
+
+
+- [**more examples**](examples)
+
+
+
 ## Pub API
 
 > 系统调用 接口

@@ -26,7 +26,7 @@ pub fn hello() {
                       __/ |          __/ |                  
                      |___/          |___/                   
                                                             
-    More details: https://github.com/Sunrisepeak/syscall    
+    More details: https://github.com/Sunrisepeak/tinysyscall
                                                             
 
 
