@@ -5,7 +5,7 @@
 #![feature(lang_items)]
 
 
-extern crate sal;
+extern crate tinysyscall;
 
 #[no_mangle]
 fn _start() { // entry point
@@ -14,9 +14,9 @@ fn _start() { // entry point
 
 fn main() {
     let hw = "Hello No Std, Support by SAL\n";
-    sal::file::write(sal::file::STDOUT, hw.as_bytes());
-    sal::time::sleep(2);
-    sal::process::exit(0);
+    tinysyscall::file::write(tinysyscall::file::STDOUT, hw.as_bytes());
+    tinysyscall::time::sleep(2);
+    tinysyscall::process::exit(0);
 }
 
 // rust lang items

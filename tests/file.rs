@@ -2,7 +2,7 @@ use std;
 use core::ffi::CStr;
 use libc::c_char;
 
-use sal;
+use tinysyscall as sal;
 
 #[test]
 fn file_ops() {

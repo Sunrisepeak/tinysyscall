@@ -1,10 +1,10 @@
-use sal::{self, mem::MemProt, mem::MemFlags};
+use tinysyscall::{self, mem::MemProt, mem::MemFlags};
 
 #[test]
 fn mem_alloc_and_free() {
     const MEM_SIZE: usize = 10;
 
-    let addr = sal::mem::mmap(
+    let addr = tinysyscall::mem::mmap(
         0, MEM_SIZE,
         MemProt::READ | MemProt::WRITE,
         MemFlags::PRIVATE | MemFlags::ANONYMOUS,
@@ -18,14 +18,14 @@ fn mem_alloc_and_free() {
 
     unsafe {
         let tmp_str: &str = "\nsal: memory test\n";
-        sal::memcpy(ptr, tmp_str.as_bytes().as_ptr(), tmp_str.len());
-        sal::file::write(
+        tinysyscall::memcpy(ptr, tmp_str.as_bytes().as_ptr(), tmp_str.len());
+        tinysyscall::file::write(
             1,
             core::mem::transmute(core::slice::from_raw_parts(ptr, tmp_str.len()))
         );
     }
 
-    let ret = sal::mem::unmmap(addr, MEM_SIZE);
+    let ret = tinysyscall::mem::unmmap(addr, MEM_SIZE);
 
     assert_ne!(ret, -1);
     

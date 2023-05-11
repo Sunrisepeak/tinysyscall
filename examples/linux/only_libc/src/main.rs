@@ -4,12 +4,12 @@
 #![feature(lang_items)]
 
 
-extern crate sal;
+extern crate tinysyscall;
 
 // main called in libc
 #[no_mangle]
 fn main() {
-    sal::file::write(sal::file::STDOUT, "Hello, world!\n".as_bytes());
+    tinysyscall::file::write(tinysyscall::file::STDOUT, "Hello, world!\n".as_bytes());
 }
 
 // rust lang items

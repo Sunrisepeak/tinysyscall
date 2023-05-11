@@ -1,6 +1,6 @@
 #![no_std]
 
-extern crate sal;
+extern crate tinysyscall;
 
 use core::fmt;
 
@@ -10,7 +10,7 @@ struct Stdout;
 impl fmt::Write for Stdout {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         // 使用系统调用, fd 1 为标准输出
-        sal::file::write(sal::file::STDOUT, s.as_bytes());
+        tinysyscall::file::write(tinysyscall::file::STDOUT, s.as_bytes());
         Ok(())
     }
 }

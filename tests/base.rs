@@ -1,4 +1,4 @@
-use sal;
+use tinysyscall as sal;
 
 #[test]
 fn hello_sal() {

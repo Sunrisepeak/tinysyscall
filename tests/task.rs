@@ -1,4 +1,4 @@
-use sal;
+use tinysyscall as sal;
 
 fn thread_func(arg: usize) {
     println!("Hello, world from new thread! arg = {}", arg);
