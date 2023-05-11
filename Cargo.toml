@@ -1,6 +1,6 @@
 [package]
 name = "tinysyscall"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["SPeak <speakshen@163.com>"]
 license = "Apache-2.0"
@@ -8,8 +8,9 @@ description = "a (no depend std) tiny syscall abstract layer..."
 readme = "README.md"
 documentation = "https://docs.rs/tinysyscall"
 repository = "https://github.com/Sunrisepeak/tinysyscall"
-keywords = ["system", "system call", "syscall", "abi", "kernel", "os", "linux", "Cross platform"]
-categories = ["Operating systems", "No standard library", "Cross platform", "System Call"]
+keywords = ["system", "syscall", "abi", "kernel", "os"]
+# https://crates.io/category_slugs
+categories = ["os", "no-std", "embedded"]
 
 
 [dependencies]
